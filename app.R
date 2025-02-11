@@ -16,7 +16,10 @@ p_load(gtools)
 p_load(dplyr)
 p_load(magrittr)
 p_load(compositions)
-p_load_gh("caijun/ggcorrplot2")
+remotes::install_github("caijun/ggcorrplot2")
+p_load(ggcorrplot2)
+p_load(reshape2)
+p_load(ggforce)
 
 # Flexible Dirichlet RNG
 rfdirichlet = function(n, alpha, p, tau) {
@@ -118,7 +121,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
   
   # Make a list from the ... arguments and plotlist
-  plots <- c(list(...), plotlist)
+  plots <- Filter(Negate(is.null), c(list(...), plotlist))
   
   numPlots = length(plots)
   
@@ -153,6 +156,15 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 ui <- fluidPage(
   useShinyjs(),  # Enable shinyjs functionality
   titlePanel("Generalised Dirichlet Distributions"),
+  titlePanel(tags$h5(
+    "A Shiny App by",
+    tags$a("Johann-Friedrich Salzmann",href="https://jfsalzmann.com",target="_blank"),
+    "(2025)",
+    br(),
+    "Implements generalisations of the Dirichlet Class proposed in",
+    tags$a("Ascari (2019)", href="https://boa.unimib.it/handle/10281/241237", target="_blank"),
+    br(),br()
+  )),
   
   sidebarLayout(
     sidebarPanel(
@@ -265,7 +277,6 @@ server <- function(input, output, session) {
                       "Double Flexible Dirichlet" = rdfdirichlet(input$n, alpha, p, tau[1]),
                       "Extended Double Flexible Dirichlet" = redfdirichlet(input$n, alpha, p, tau_matrix))
     samples_mixed <- switch(input$dist_type,
-                     "Dirichlet" = rdirichlet(input$n, alpha),
                      "Flexible Dirichlet" = rfdirichlet_(input$n, alpha, p_vector, tau[1]),
                      "Extended Flexible Dirichlet" = refdirichlet_(input$n, alpha, p_vector, tau),
                      "Double Flexible Dirichlet" = rdfdirichlet_(input$n, alpha, p, tau[1]),
@@ -274,15 +285,19 @@ server <- function(input, output, session) {
     samples <- as.data.frame(samples)
     colnames(samples) <- c("V1", "V2", "V3")
     
-    samples_mixed <- as.data.frame(samples_mixed)
-    colnames(samples_mixed) <- c("V1", "V2", "V3")
+    if(input$dist_type != "Dirichlet"){
+      samples_mixed <- as.data.frame(samples_mixed)
+      colnames(samples_mixed) <- c("V1", "V2", "V3")
+      cluster = " Cluster"
+    } else {
+      cluster = ""
+    }
     
     samples_clr <- as_tibble(clr(samples))
-    cov_clr <- cov(samples_clr)
-    cor_s <- cor(samples)
-    cor_clr <- cor(samples_clr)
+    samples_pwlr <- as_tibble(pwlr(samples))
     
-    print(cov_clr)
+    cor_pwlr <- cor(samples_pwlr)
+    cor_clr <- cor(samples_clr)
     
     p1 = ggtern(samples, aes(x=V1, y=V3, z=V2)) + 
       geom_point(size=.5, alpha = .8) + 
@@ -290,20 +305,24 @@ server <- function(input, output, session) {
       stat_density_tern(aes(fill=..level.., alpha=..level..),geom='polygon',bdl=.05) +#now you need to use stat_density_tern
       scale_fill_gradient2(high = "red") +                                    #define the fill color
       guides(color = "none", fill = "none", alpha = "none")  +
-      labs(title = paste("Ternary Plot of", input$dist_type, "Cluster Realisations")) +
+      labs(title = paste0("Ternary Plot of ", input$dist_type, cluster, " Realisations")) +
       theme_ggtern()
     
-    p2 = ggtern(samples_mixed, aes(x=V1, y=V3, z=V2)) + 
-      geom_point(size=.5, alpha = .8) + 
-      geom_density_tern(bdl=.05) +
-      stat_density_tern(aes(fill=..level.., alpha=..level..),geom='polygon',bdl=.05) +#now you need to use stat_density_tern
-      scale_fill_gradient2(high = "red") +                                    #define the fill color
-      guides(color = "none", fill = "none", alpha = "none")  +
-      labs(title = paste("Ternary Plot of", input$dist_type, "Mixture Density Realisations")) +
-      theme_ggtern()
+    if(input$dist_type != "Dirichlet"){
+      p2 = ggtern(samples_mixed, aes(x=V1, y=V3, z=V2)) + 
+        geom_point(size=.5, alpha = .8) + 
+        geom_density_tern(bdl=.05) +
+        stat_density_tern(aes(fill=..level.., alpha=..level..),geom='polygon',bdl=.05) +#now you need to use stat_density_tern
+        scale_fill_gradient2(high = "red") +                                    #define the fill color
+        guides(color = "none", fill = "none", alpha = "none")  +
+        labs(title = paste0("Ternary Plot of ", input$dist_type, " Mixture Density Realisations")) +
+        theme_ggtern()
+    } else {
+      p2 = NULL
+    }
     
-    p31 = ggcorrplot.mixed(cor_clr,upper="ellipse") + labs(title = "CLR Corr Plot") + theme(panel.background = element_rect(fill = "grey98"))
-    p32 = ggcorrplot.mixed(cov_clr) + labs(title = "CLR Cov Plot") + theme(panel.background = element_rect(fill = "grey98"))
+    p31 = ggcorrplot.mixed(cor_pwlr,upper="ellipse") + labs(title = "PWLR Corr Plot") + theme(panel.background = element_rect(fill = "grey98"))
+    p32 = ggcorrplot.mixed(cor_clr) + labs(title = "CLR Corr Plot") + theme(panel.background = element_rect(fill = "grey98"))
     
     multiplot(p1,p2,p31,p32,cols = 1)
   }, height = 1400,width=700)
