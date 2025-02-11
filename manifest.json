@@ -678,6 +678,42 @@
         "Built": "R 4.3.2; ; 2024-02-27 01:50:55 UTC; windows"
       }
     },
+    "ggcorrplot2": {
+      "Source": "github",
+      "Repository": null,
+      "description": {
+        "Package": "ggcorrplot2",
+        "Type": "Package",
+        "Title": "Visualize a Correlation Matrix using ggplot2",
+        "Version": "0.1.2",
+        "Date": "2022-05-07",
+        "Authors@R": "c(\n    person(\"Jun\", \"Cai\", role = c(\"aut\", \"cre\"), \n    email = \"cai-j12@mails.tsinghua.edu.cn\",  comment = c(ORCID = \"0000-0001-9495-1226\")),\n    person(\"Granville\", \"Matheson\", role = \"ctb\",\n    email= \"mathesong@gmail.com\", comment = c(ORCID = \"0000-0002-5646-4547\")),\n    person(\"Samson\", \"Leonard Daniël\", role = \"ctb\",\n    email= \"l.d.samson@gmail.com\", comment = c(ORCID = \"0000-0002-6252-7639\"))\n    )",
+        "Maintainer": "Jun Cai <caijun@fudan.edu.cn>",
+        "Description": "An implementation of the corrplot package using ggplot2.",
+        "Depends": "R (>= 3.2)",
+        "Imports": "ggplot2, dplyr, rlang",
+        "Suggests": "ggforce, RColorBrewer, reshape2",
+        "License": "GPL-3",
+        "URL": "https://github.com/caijun/ggcorrplot2",
+        "BugReports": "https://github.com/caijun/ggcorrplot2/issues",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.1.2",
+        "RemoteType": "github",
+        "RemoteHost": "api.github.com",
+        "RemoteRepo": "ggcorrplot2",
+        "RemoteUsername": "caijun",
+        "RemoteRef": "HEAD",
+        "RemoteSha": "e77127b2251856db0a794a4b3a5ca90e3802b14d",
+        "GithubRepo": "ggcorrplot2",
+        "GithubUsername": "caijun",
+        "GithubRef": "HEAD",
+        "GithubSHA1": "e77127b2251856db0a794a4b3a5ca90e3802b14d",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-02-10 23:02:58 UTC; mail",
+        "Author": "Jun Cai [aut, cre] (<https://orcid.org/0000-0001-9495-1226>),\n  Granville Matheson [ctb] (<https://orcid.org/0000-0002-5646-4547>),\n  Samson Leonard Daniël [ctb] (<https://orcid.org/0000-0002-6252-7639>)",
+        "Built": "R 4.3.2; ; 2025-02-10 23:02:58 UTC; windows"
+      }
+    },
     "ggplot2": {
       "Source": "CRAN",
       "Repository": "http://ftp.fau.de/cran",
@@ -2041,7 +2077,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "1abdfb7f3e19f8162298d2c1daa04240"
+      "checksum": "7e258156c4b0d6b371539cbd912f4d8d"
     }
   },
   "users": null
