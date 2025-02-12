@@ -28,7 +28,7 @@ source("ggcorrplot.R")
 source("ggcorrplot.mixed.R")
 
 # Flexible Dirichlet RNG
-rfdirichlet = function(n, alpha, p, tau) {
+fdirichlet_rng = function(n, alpha, p, tau) {
   D = length(alpha)
   ni = rmultinom(1,n,p)[,1]
   sample = NULL
@@ -39,7 +39,7 @@ rfdirichlet = function(n, alpha, p, tau) {
 }
 
 # Flexible Dirichlet PDF
-rfdirichlet_ = function(n, alpha, p, tau) {
+fdirichlet_pdf = function(n, alpha, p, tau) {
   D = length(alpha)
   mixture = 0
   for(i in 1:D){
@@ -49,7 +49,7 @@ rfdirichlet_ = function(n, alpha, p, tau) {
 }
 
 # Extended Flexible Dirichlet RNG
-refdirichlet = function(n, alpha, p, tau) {
+efdirichlet_rng = function(n, alpha, p, tau) {
   D = length(alpha)
   ni = rmultinom(1,n,p)[,1]
   sample = NULL
@@ -60,7 +60,7 @@ refdirichlet = function(n, alpha, p, tau) {
 }
 
 # Extended Flexible Dirichlet PDF
-refdirichlet_ = function(n, alpha, p, tau) {
+efdirichlet_pdf = function(n, alpha, p, tau) {
   D = length(alpha)
   mixture = 0
   for(i in 1:D){
@@ -70,7 +70,7 @@ refdirichlet_ = function(n, alpha, p, tau) {
 }
 
 # Double Flexible Dirichlet RNG
-rdfdirichlet = function(n, alpha, p, tau) {
+dfdirichlet_rng = function(n, alpha, p, tau) {
   D = length(alpha)
   p_flat = c(p)
   ni = rmultinom(1,n,p_flat)[,1]
@@ -85,7 +85,7 @@ rdfdirichlet = function(n, alpha, p, tau) {
 }
 
 # Double Flexible Dirichlet PDF
-rdfdirichlet_ = function(n, alpha, p, tau) {
+dfdirichlet_pdf = function(n, alpha, p, tau) {
   D = length(alpha)
   mixture = 0
   for(i in 1:D){
@@ -97,7 +97,7 @@ rdfdirichlet_ = function(n, alpha, p, tau) {
 }
 
 # Extended Double Flexible Dirichlet RNG
-redfdirichlet = function(n, alpha, p, tau) {
+edfdirichlet_rng = function(n, alpha, p, tau) {
   D = length(alpha)
   p_flat = c(p)
   ni = rmultinom(1,n,p_flat)[,1]
@@ -112,7 +112,7 @@ redfdirichlet = function(n, alpha, p, tau) {
 }
 
 # Extended Double Flexible Dirichlet PDF
-redfdirichlet_ = function(n, alpha, p, tau) {
+edfdirichlet_pdf = function(n, alpha, p, tau) {
   D = length(alpha)
   mixture = 0
   for(i in 1:D){
@@ -278,15 +278,15 @@ server <- function(input, output, session) {
     # Choose function based on input
     samples <- switch(input$dist_type,
                       "Dirichlet" = rdirichlet(input$n, alpha),
-                      "Flexible Dirichlet" = rfdirichlet(input$n, alpha, p_vector, tau[1]),
-                      "Extended Flexible Dirichlet" = refdirichlet(input$n, alpha, p_vector, tau),
-                      "Double Flexible Dirichlet" = rdfdirichlet(input$n, alpha, p, tau[1]),
-                      "Extended Double Flexible Dirichlet" = redfdirichlet(input$n, alpha, p, tau_matrix))
+                      "Flexible Dirichlet" = fdirichlet_rng(input$n, alpha, p_vector, tau[1]),
+                      "Extended Flexible Dirichlet" = efdirichlet_rng(input$n, alpha, p_vector, tau),
+                      "Double Flexible Dirichlet" = dfdirichlet_rng(input$n, alpha, p, tau[1]),
+                      "Extended Double Flexible Dirichlet" = edfdirichlet_rng(input$n, alpha, p, tau_matrix))
     samples_mixed <- switch(input$dist_type,
-                     "Flexible Dirichlet" = rfdirichlet_(input$n, alpha, p_vector, tau[1]),
-                     "Extended Flexible Dirichlet" = refdirichlet_(input$n, alpha, p_vector, tau),
-                     "Double Flexible Dirichlet" = rdfdirichlet_(input$n, alpha, p, tau[1]),
-                     "Extended Double Flexible Dirichlet" = redfdirichlet_(input$n, alpha, p, tau_matrix))
+                     "Flexible Dirichlet" = fdirichlet_pdf(input$n, alpha, p_vector, tau[1]),
+                     "Extended Flexible Dirichlet" = efdirichlet_pdf(input$n, alpha, p_vector, tau),
+                     "Double Flexible Dirichlet" = dfdirichlet_pdf(input$n, alpha, p, tau[1]),
+                     "Extended Double Flexible Dirichlet" = edfdirichlet_pdf(input$n, alpha, p, tau_matrix))
     
     samples <- as.data.frame(samples)
     colnames(samples) <- c("V1", "V2", "V3")
