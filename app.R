@@ -16,10 +16,16 @@ p_load(gtools)
 p_load(dplyr)
 p_load(magrittr)
 p_load(compositions)
-remotes::install_github("caijun/ggcorrplot2",force=T)
 p_load(ggcorrplot2)
 p_load(reshape2)
 p_load(ggforce)
+
+# Fix for ggcorrplot2 positron connect package installation problem
+#remotes::install_github("caijun/ggcorrplot2",force=T)
+p_load(rlang)
+p_load(dplyr)
+source("ggcorrplot.R")
+source("ggcorrplot.mixed.R")
 
 # Flexible Dirichlet RNG
 rfdirichlet = function(n, alpha, p, tau) {
